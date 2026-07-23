@@ -69,6 +69,7 @@
     max-width:900px;
     margin:0 auto;
     text-align:center;
+    overflow:hidden;
   }
   .divider{
     width:60px; height:2px; background:var(--gold);
@@ -93,6 +94,16 @@
     padding-top:60px;
     position:relative;
   }
+  .ganesh-blessing{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    margin-bottom:20px;
+  }
+  .ganesh-icon{
+    width:200px; height:auto; opacity:0.95;
+    border-radius:50%;
+    border:2px solid var(--gold);
+  }
+  .blessing-text{font-size:0.85rem; letter-spacing:1px; color:var(--gold-light);}
   .monogram{
     font-family:'Yatra One',cursive; font-size:1.1rem; color:var(--gold);
     letter-spacing:2px; margin-bottom:18px;
@@ -178,6 +189,7 @@
     text-align:center; padding:50px 24px 60px; color:var(--ivory-dim);
     font-size:0.85rem;
     position:relative;
+    overflow:hidden;
   }
   footer .hashtag{margin-top:10px; color:var(--gold-light); letter-spacing:1px;}
 
@@ -228,6 +240,21 @@
     pointer-events:none;
   }
   .loader-ring{width:230px; height:230px; color:var(--gold); opacity:0.4;}
+
+  /* ===== Falling Flower Petals ===== */
+  .petals-layer{
+    position:fixed; inset:0; z-index:300; pointer-events:none; overflow:hidden;
+  }
+  .petal{
+    position:absolute; top:-40px;
+    animation-name:petalFall; animation-timing-function:linear; animation-iteration-count:infinite;
+  }
+  @keyframes petalFall{
+    0%{ transform:translateY(-10vh) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:0.9; }
+    92%{ opacity:0.85; }
+    100%{ transform:translateY(110vh) translateX(var(--drift,40px)) rotate(var(--rot,360deg)); opacity:0; }
+  }
 </style>
 </head>
 <body>
@@ -274,7 +301,15 @@
       <use href="#petalInner" transform="rotate(345 100 100)"/>
     </g>
   </symbol>
+
+  <!-- Petal shape for the falling-flowers layer -->
+  <symbol id="petal-shape" viewBox="0 0 20 28">
+    <path d="M10 0 C18 6 18 20 10 28 C2 20 2 6 10 0 Z"/>
+  </symbol>
 </svg>
+
+<!-- Falling flower petals, drift down across the whole page -->
+<div class="petals-layer" id="petalsLayer"></div>
 
 <div id="loader">
   <div class="loader-ring-wrap">
@@ -299,6 +334,10 @@
         <path d="M340 4 q6 22 -6 30 q-12 -8 -6 -30 z"/>
       </g>
     </svg>
+  </div>
+  <div class="ganesh-blessing">
+    <img class="ganesh-icon" src="ganesh.png" alt="Lord Ganesha">
+    <div class="blessing-text devanagari">श्री गणेशाय नमः</div>
   </div>
   <div class="monogram devanagari">॥ शुभ विवाह ॥</div>
   <h1 class="hero-title">Sanket <span class="heart">♥</span> Sakshi</h1>
@@ -341,19 +380,19 @@
   <div class="divider"></div>
   <div class="route-track">
     <div class="stop">
-      <div class="stop-city">Warud · Residence</div>
+      <div class="stop-city">Warud · At Our Residence, Opposite Of Vijay Talkies, Police Station Road</div>
       <div class="stop-title">Haldi</div>
       <div class="stop-meta">Wednesday, 19th August · 9:00 AM</div>
       <div class="stop-meta">Dress Code: Shades of Yellow</div>
     </div>
     <div class="stop">
-      <div class="stop-city">Amravati · Silver Star Hotel</div>
+      <div class="stop-city">Amravati · Silver Star Hotel, Rahatgaon Road</div>
       <div class="stop-title">Sangeet</div>
       <div class="stop-meta">Wednesday, 19th August · 7:00 PM onwards</div>
       <div class="stop-meta">Dress Code: Shades of Navy Blue (Suit/Blazer — Gown/Lehenga)</div>
     </div>
     <div class="stop">
-      <div class="stop-city">Amravati · Silver Star Hotel</div>
+      <div class="stop-city">Amravati · Silver Star Hotel, Rahatgaon Road</div>
       <div class="stop-title">The Wedding</div>
       <div class="stop-meta">Thursday, 20th August · Muhurat 10:45 AM</div>
       <div class="stop-meta">Dress Code: Traditional Kurta/Sherwani — Saari</div>
@@ -395,7 +434,7 @@
   <div class="mandala-layer"><svg class="mandala-svg spin-ccw spin-med" viewBox="0 0 200 200"><use href="#rangoli-mandala"/></svg></div>
   <div class="devanagari" style="color:var(--gold-light); font-size:1.1rem;">॥ मंगल कार्य ॥</div>
   <div>Sanket &amp; Sakshi · 20th August 2026 · Amravati</div>
-  <div class="hashtag">#SanSakKahaani</div>
+  <div class="hashtag">A warm welcome from the Ganorkar family</div>
 </footer>
 
 <button id="music-toggle" title="Play music">
@@ -467,6 +506,33 @@
     });
   }, {threshold:0.15});
   document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+
+  // Generate falling flower petals across the whole page
+  (function(){
+    const layer = document.getElementById('petalsLayer');
+    const colors = ['#E8C874', '#A8385A', '#C9A227'];
+    const total = 16;
+    for(let i = 0; i < total; i++){
+      const petal = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      petal.setAttribute('viewBox', '0 0 20 28');
+      petal.classList.add('petal');
+      const size = 10 + Math.random() * 10;
+      petal.style.width = size + 'px';
+      petal.style.height = (size * 1.4) + 'px';
+      petal.style.left = (Math.random() * 100) + '%';
+      petal.style.setProperty('--drift', (Math.random() * 160 - 80) + 'px');
+      petal.style.setProperty('--rot', (Math.random() > 0.5 ? 360 : -360) + 'deg');
+      const dur = 9 + Math.random() * 8;
+      petal.style.animationDuration = dur + 's';
+      petal.style.animationDelay = (-Math.random() * dur) + 's';
+      const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+      use.setAttribute('href', '#petal-shape');
+      use.setAttribute('fill', colors[i % colors.length]);
+      use.setAttribute('opacity', (0.5 + Math.random() * 0.4).toFixed(2));
+      petal.appendChild(use);
+      layer.appendChild(petal);
+    }
+  })();
 </script>
 
 </body>
