@@ -370,32 +370,12 @@
   <div class="hashtag">#SanSakKahaani</div>
 </footer>
 
-<button id="music-toggle" title="Play music">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="10" stroke="#C9A227" stroke-width="1.5"/>
-    <circle cx="12" cy="12" r="3" fill="#C9A227"/>
-  </svg>
-</button>
+<button id="music-toggle" title="Play music">🎵</button>
 
-<button id="music-toggle" title="Play music">
-  🎵
-</button>
+<audio id="bg-audio" loop preload="none">
+  <source src="wedding_invite_song.mp3" type="audio/mpeg">
+</audio>
 
-<audio id="bg-audio" loop preload="metadata">
-  <source src="https://raw.githubusercontent.com/SGanorkar/Wedding-Invite/main/KSHMR%20%26%20Lost%20Stories%20-%20Bombay%20Dreams%20%5Bfeat.%20Kavita%20Seth%5D%20(Official%20Music%20Video)%20-%20KSHMR%20(192k).mp3" type="audio/mpeg">
-y()
-      .then(() => {
-        this.innerHTML = '🔇';
-        this.title = 'Pause music';
-      })
-      .catch(err => console.error(err));
-  } else {
-    audio.pause();
-    this.innerHTML = '🎵';
-    this.title = 'Play music';
-  }
-});
-</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const audio = document.getElementById('bg-audio');
@@ -405,12 +385,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (audio.paused) {
       try {
         await audio.play();
+        button.innerHTML = '🔇';
         button.title = 'Pause music';
       } catch (err) {
         console.error('Audio playback failed:', err);
       }
     } else {
       audio.pause();
+      button.innerHTML = '🎵';
       button.title = 'Play music';
     }
   });
